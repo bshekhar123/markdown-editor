@@ -1,17 +1,56 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import Remarkable from 'remarkable';    
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+class MarkdownEditor extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.state = { 
+            value: 'Type some *markdown* here!'
+        };
+    }
+
+
+    handleChange(e) {
+        this.setState({ 
+            value: e.target.value
+        });
+    }
+
+    getRawMarkup() {
+        const md = new Remarkable();
+        return {__html: md.render(this.state.value)};
+    }
+
+    render() {
+        return (
+            <div className="container">
+                <div className="input">
+                    <h3>Input</h3>
+                <textarea
+                    className="input-text"
+                    onChange={this.handleChange}
+                    defaultValue={this.state.value}
+                />
+                </div>
+                <div className="output">
+                    <h3>Markdown</h3>
+                <div 
+                    dangerouslySetInnerHTML={this.getRawMarkup()}
+                    className="output-text"
+                >
+                </div>
+                </div>                
+            </div>
+        )
+    }
+}
+
+// ========================================
+
+ReactDOM.render(
+    <MarkdownEditor />,
+    document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
